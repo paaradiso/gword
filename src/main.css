@@ -1,0 +1,25 @@
+@import url("https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600,700&display=swap");
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* https://tailwindcss.com/blog/tailwindcss-v4#automatic-content-detection */
+@source "../build/dev/javascript";
+
+body,
+html {
+  @apply bg-background text-foreground;
+}
+
+:root {
+  --background: var(--color-stone-50);
+  --foreground: var(--color-stone-900);
+}
+
+@theme {
+  --font-sans: "General Sans";
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+}
