@@ -1,8 +1,11 @@
-import gleam/int
+import gleam/list
+import gleam/option
 import lustre
-import lustre/element.{text}
-import lustre/element/html.{button, div, p}
-import lustre/event.{on_click}
+import lustre/attribute
+import lustre/element
+import lustre/element/html
+import lustre/event
+import words
 
 pub fn main() {
   let app = lustre.simple(init, update, view)
@@ -11,28 +14,43 @@ pub fn main() {
   Nil
 }
 
+type Model {
+  Model(selected_word: option.Option(String))
+}
+
 fn init(_) {
-  0
+  Model(selected_word: option.None)
 }
 
 type Message {
-  Incr
-  Decr
+  SelectWord(word: String)
 }
 
-fn update(model, message) {
+fn update(_model: Model, message: Message) -> Model {
   case message {
-    Incr -> model + 1
-    Decr -> model - 1
+    SelectWord(word) -> {
+      case list.contains(words.word_bank, word) {
+        True -> Model(selected_word: option.Some(word))
+        False -> Model(selected_word: option.None)
+      }
+    }
   }
 }
 
-fn view(model) {
-  let count = int.to_string(model)
-
-  div([], [
-    button([on_click(Incr)], [text(" + ")]),
-    p([], [text(count)]),
-    button([on_click(Decr)], [text(" - ")]),
-  ])
+fn view(model: Model) {
+  html.div(
+    [],
+    list.map(words.word_bank, fn(word) {
+      html.p(
+        [
+          event.on_click(SelectWord(word)),
+          attribute.class(case model.selected_word == option.Some(word) {
+            True -> "font-bold"
+            False -> ""
+          }),
+        ],
+        [element.text(word)],
+      )
+    }),
+  )
 }
