@@ -26,12 +26,15 @@ type Message {
   SelectWord(word: String)
 }
 
-fn update(_model: Model, message: Message) -> Model {
+fn update(model: Model, message: Message) -> Model {
   case message {
     SelectWord(word) -> {
-      case list.contains(words.word_bank, word) {
-        True -> Model(selected_word: option.Some(word))
-        False -> Model(selected_word: option.None)
+      case
+        list.contains(words.word_bank, word),
+        model.selected_word == option.Some(word)
+      {
+        True, False -> Model(selected_word: option.Some(word))
+        _, _ -> Model(selected_word: option.None)
       }
     }
   }
